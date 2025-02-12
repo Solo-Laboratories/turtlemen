@@ -7,3 +7,4 @@ Build a web application and then make a PWA to allow for the application to be s
 ## Documentation
 - https://brainhub.eu/library/progressive-web-apps-advantages-disadvantages
 - https://www.softr.io/no-code/progressive-web-apps-examples#:~:text=TikTok%20PWA%20allowed%20users%20to,reducing%20loading%20times%20and%20friction.
+- https://ericdavidsmith.com/blog/deno/deno-fresh-pwa-progressive-web-app
