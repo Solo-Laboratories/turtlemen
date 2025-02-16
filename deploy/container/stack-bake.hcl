@@ -1,23 +1,23 @@
 group "default" {
-    targets = ["authentication", "backend", "frontend"]
+    targets = ["auth-mock", "server", "web-app"]
 }
 
-target "authentication"{
-    context = "./server/authentication"
-    dockerfile = "authenitcation.Dockerfile"
+target "auth-mock"{
+    context = "./backend/auth-mock"
+    dockerfile = "auth-mock.Dockerfile"
     args = {}
-    tags = ["turtlemen/authenitcation:latest"]
+    tags = ["turtlemen/auth-mock:latest"]
 }
 
-target "frontend"{
-    context = "./app/web"
-    dockerfile = "frontend.Dockerfile"
+target "web-app"{
+    context = "./frontend/web"
+    dockerfile = "web-app.Dockerfile"
     args = {}
-    tags = ["turtlemen/frontend:latest"]
+    tags = ["turtlemen/web-app:latest"]
 }
 
-target "backend"{
-    context = "./server/turtlemen-server"
+target "server"{
+    context = "./backend/server"
     dockerfile = "backend.Dockerfile"
     args = {}
     tags = ["turtlemen/backend:latest"]

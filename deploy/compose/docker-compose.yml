@@ -1,0 +1,57 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+    - "80:80"
+    # - "443:443"
+    volumes:
+    - ${nginx_config}:/etc/nginx/conf.d/default.conf
+    depends_on:
+    - server
+    - auth-mock
+    networks:
+    - main
+    - auth
+
+  cockroachdb:
+    image: cockroachdb/cockroach:latest-v23.1
+    # ports:
+    #   - "8080:8080" # this should be routed by nginx? But can be turned on here for quick debugging
+    volumes:
+    - db_data:/var/lib/cockroach
+    - ${cockroachdb_init}:/cockroach-init.sql 
+    command: start --insecure --listen-addr=0.0.0.0 --http-addr=0.0.0.0 --join=cockroachdb
+    networks:
+    - main
+
+  web-app:
+    build:
+      context: ${web-app_context}
+      dockerfile: ${web-app_dockerfile}
+    networks:
+    - main
+
+  auth-mock:
+    build:
+      context: ${auth-mock_context}
+      dockerfile: ${auth-mock_dockerfile}
+    networks:
+    - auth
+
+  server:
+    build:
+      context: ${server_context}
+      dockerfile: ${server_dockerfile}
+    depends_on:
+      - cockroachdb
+    environment:
+      - DATABASE_URL=postgres://root@cockroachdb:26257/turtlemen_dev?sslmode=disable
+    networks:
+      - main
+
+volumes:
+  db_data:
+
+networks:
+  main:
+  auth:

@@ -1,4 +1,9 @@
 # CHANGELOG
+## v0.0.0-16.2.25
+- Adds Deployment of stack using Docker Compose
+- Reorganized folder structure to better split frontend from backend
+- Restructured Authentication to be Authentication Mock as it will be replaced by OAuth2 Proxy/Redis in the coming months
+
 ## v0.0.0-10.2.25
 - Adds skeleton code for frontend landing page
 - Adds tools and docs for serving up the frontend
