@@ -31,5 +31,5 @@ No decision as of Feb. 16, 2025
 N/A
 
 ## Images
-![First revision of the architecture design image that covers the authentication, session token, and backend][architecture_turtlemen_rev1.png]
-![Second revision of the architecture design image that covers the authentication, session token, and backend][architecture_turtlemen_rev2.png]
+![First revision of the architecture design image that covers the authentication, session token, and backend](./architecture_turtlemen_rev1.png)
+![Second revision of the architecture design image that covers the authentication, session token, and backend](./architecture_turtlemen_rev2.png)
