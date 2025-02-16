@@ -1,4 +1,4 @@
-module github.com/Solo-Laboratories/turtlemen/authenication-server
+module github.com/Solo-Laboratories/turtlemen/auth-mock
 
 go 1.23.6
 

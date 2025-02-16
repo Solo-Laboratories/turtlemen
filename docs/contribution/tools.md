@@ -1,5 +1,14 @@
 # Tool Usage
 
+## Docker
+TBD
+
+## Helm 
+TBD
+
+## Golang
+TBD
+
 ## Deno
 ### Notes
 - https://docs.deno.com/runtime/fundamentals/
