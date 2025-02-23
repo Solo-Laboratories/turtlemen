@@ -3,14 +3,17 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
-	"net/http"
+	"math/rand"
+	"net"
 	"os"
 	"time"
 
-	"github.com/google/uuid"
-	sloghttp "github.com/samber/slog-http"
+	pb "github.com/Solo-Laboratories/turtlemen/auth-mock/mockauth" // Import the generated files from the same directory
+
 	"github.com/urfave/cli/v3"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -28,74 +31,37 @@ func main() {
 	}
 }
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"` // We will need to hash this
+type server struct {
+	pb.UnimplementedAuthServiceServer
 }
 
-type Session struct {
-	Token     string    `json:"token"`
-	UserID    string    `json:"userId"`
-	ExpiresAt time.Time `json:"expiresAt"`
-}
+func (s *server) GetRandomString(ctx context.Context, req *pb.AuthRequest) (*pb.RandomStringResponse, error) {
+	// Generate a random string
+	rand.Seed(time.Now().UnixNano())
+	randomString := fmt.Sprintf("random-%d", rand.Intn(100000))
 
-var users = map[string]User{
-	"testuser": {Username: "testuser", Password: "password"}, // This will be stored in a database?
-}
+	// Convert to JSON
+	jsonResponse, err := json.Marshal(map[string]string{"random_string": randomString})
+	if err != nil {
+		return nil, err
+	}
 
-var sessions = make(map[string]Session)
+	return &pb.RandomStringResponse{RandomString: string(jsonResponse)}, nil
+}
 
 func start() {
-	http.HandleFunc("/login", loginHandler)
-
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-
-	config := sloghttp.Config{
-		WithSpanID:  true,
-		WithTraceID: true,
-	}
-
-	mux := http.NewServeMux()
-
-	// Middleware
-	handler := sloghttp.Recovery(mux)
-	handler = sloghttp.NewWithConfig(logger, config)(handler)
-
-	// Start server
-	http.ListenAndServe(":8080", handler)
-}
-
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var user User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
+		slog.Error(fmt.Sprintf("failed to listen: %v", err))
+		panic("failed to start gRPC server")
 	}
 
-	storedUser, ok := users[user.Username]
-	if !ok || storedUser.Password != user.Password { // In real app, compare hashes!
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-		return
+	s := grpc.NewServer()
+	pb.RegisterAuthServiceServer(s, &server{})
+
+	slog.Info("Server is running on port 50051")
+	if err := s.Serve(lis); err != nil {
+		slog.Error(fmt.Sprintf("failed to serve: %v", err))
+		panic("failed to serve gRPC server")
 	}
-
-	// Generate Session Token
-	token := uuid.New().String()
-	expiresAt := time.Now().Add(time.Hour * 24) // Example: 24-hour expiry
-
-	session := Session{
-		Token:     token,
-		UserID:    user.Username, // Use a proper user ID in a real app
-		ExpiresAt: expiresAt,
-	}
-
-	sessions[token] = session
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }

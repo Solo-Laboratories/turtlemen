@@ -6,6 +6,8 @@ This is aimed at being a clone of a popular limited video sharing service that h
 - [Deno v2+](https://deno.com/)
 - [Cockroach DB](https://www.cockroachlabs.com/)
 - [Python 3+](https://www.python.org/downloads/)
+- [Proto Compiler](https://grpc.io/docs/protoc-installation/)
+- [NVM for NPM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
 
 ## Instllation 
 TBA

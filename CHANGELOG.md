@@ -1,6 +1,7 @@
 # CHANGELOG
 ## v0.0.0-20.2.25
 - Mocked out Authentication Service to use in place of OAuth2 Proxy
+- Created gRPC connection between frontend and backend Mock Authentication service
 
 ## v0.0.0-16.2.25
 - Adds Deployment of stack using Docker Compose
